@@ -1,0 +1,5 @@
+fullchain.pem
+privkey.pem
+.env
+__pycache__/
+prod_bot_env/
