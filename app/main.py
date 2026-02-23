@@ -16,7 +16,6 @@ from datetime import datetime
 from dotenv import load_dotenv
 import os
 import asyncio
-import threading
 from contextlib import asynccontextmanager
 
 # Загружаем переменные из файла .env
@@ -75,10 +74,6 @@ app.add_middleware(
 
 # Список возможных статусов
 ORDER_STATUSES = ["Собирается", "Готовится", "Отправлен", "Доставлен"]
-
-# Потокобезопасное хранилище количеств
-quantities_storage = {}
-quantities_lock = threading.Lock()
 
 # --- РАБОТА С ДАННЫМИ ---
 def load_products():
@@ -246,42 +241,6 @@ async def help_command(message: types.Message):
 
 
 
-
-# --- ТОВАРЫ ---
-async def show_products_cb(query: types.CallbackQuery, category_key: str):
-    """Показывает товары выбранной категории"""
-    products = load_products()
-    
-    if category_key not in products:
-        await query.answer("Категория не найдена")
-        return
-    
-    category_data = products[category_key]
-    items = category_data.get('items', {})
-    
-    keyboard = types.InlineKeyboardMarkup(
-        inline_keyboard=[
-            [types.InlineKeyboardButton(
-                text=f"{item_data['name']} - ${item_data['price']}",
-                callback_data=f"item_{item_id}"
-            )]
-            for item_id, item_data in items.items()
-        ] + [
-            [types.InlineKeyboardButton(
-                text="🔙 Назад к категориям",
-                callback_data="back_to_categories"
-            )]
-        ]
-    )
-    
-    message_text = f"🛒 Товары в категории '{category_data['name']}':"
-    
-    try:
-        await query.message.edit_text(message_text, reply_markup=keyboard)
-    except Exception as e:
-        print(f"Ошибка при обновлении товаров: {e}")
-    
-    await query.answer()
 
 
 
