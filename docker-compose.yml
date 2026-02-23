@@ -8,8 +8,8 @@ services:
     volumes:
       - ./app:/app
     networks:
-      - nginx-network
+      - ngonx-pm_default
 
 networks:
-  nginx-network:
+  ngonx-pm_default:
     external: true
