@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -77,38 +78,67 @@
             transform: scale(1.02);
         }
 
-        .products {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .product-btn {
+        .product-row {
             background: white;
             border: 1px solid #e0e0e0;
-            padding: 15px;
-            border-radius: 8px;
-            cursor: pointer;
+            padding: 12px 15px;
+            border-radius: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.2s;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
-        .product-btn:hover {
-            border-color: #667eea;
-            background: #f9f9f9;
+        .product-info-mini {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-right: 15px;
         }
 
-        .product-btn .name {
+        .product-row .name {
             font-weight: 600;
+            color: #333;
+            font-size: 16px;
         }
 
-        .product-btn .price {
-            color: #667eea;
+        .product-row .price {
+            color: #5c7cfa;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 18px;
+        }
+
+        .product-row .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .qty-btn-mini {
+            width: 55px;
+            height: 38px;
+            border: 1px solid #333;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 400;
+            color: #ff922b;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .qty-btn-mini:hover {
+            background: #f8f9fa;
+        }
+
+        .qty-btn-mini:active {
+            transform: scale(0.95);
+            background: #f1f3f5;
         }
 
         .back-btn {
@@ -419,6 +449,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- КАТЕГОРИИ -->
@@ -468,7 +499,8 @@
             <div class="header">
                 <h1>✅ Успешно!</h1>
             </div>
-            <div id="orderDetails" style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;"></div>
+            <div id="orderDetails" style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+            </div>
             <button class="submit-btn" onclick="showCategories()">Вернуться в каталог</button>
         </div>
 
@@ -496,43 +528,43 @@
 
         // Получаем ссылку на Telegram Web App
         const tg = window.Telegram?.WebApp || {};
-        
+
         console.log('[Init] Telegram WebApp объект:', tg);
         console.log('[Init] tg.initDataUnsafe доступен:', !!tg.initDataUnsafe);
 
         // Загружаем товары и инициализируем при открытии
         document.addEventListener('DOMContentLoaded', () => {
             console.log('[DOMContentLoaded] Начинаю инициализацию');
-            
+
             // Расширяем окно Mini App
             if (tg.expand) {
                 tg.expand();
                 console.log('[Init] tg.expand() вызван');
             }
-            
+
             // Сигнализируем Telegram что app готов
             if (tg.ready) {
                 tg.ready();
                 console.log('[Init] tg.ready() вызван');
             }
-            
+
             // Вытягиваем данные пользователя
             extractUserData();
             console.log('[Init] Пользователь (после extractUserData):', userData);
-            
+
             // Загружаем товары
             loadProducts();
         });
-        
+
         // Функция для извлечения данных пользователя
         function extractUserData() {
             console.log('[extractUserData] Начинаю извлечение данных пользователя');
-            
+
             // Основной способ: получаем из URL параметров (передаются ботом)
             const urlParams = new URLSearchParams(window.location.search);
             const urlUserId = urlParams.get('user_id');
             const urlUsername = urlParams.get('username');
-            
+
             if (urlUserId) {
                 userData = {
                     id: parseInt(urlUserId),
@@ -542,16 +574,16 @@
                 console.log('[extractUserData] ✅ Данные получены из URL:', userData);
                 return;
             }
-            
+
             console.log('[extractUserData] ⚠️ URL параметры не найдены - пытаюсь получить из Telegram');
-            
+
             // Fallback 1: прямой доступ к initDataUnsafe
             if (tg.initDataUnsafe?.user) {
                 userData = tg.initDataUnsafe.user;
                 console.log('[extractUserData] ✅ Данные получены из tg.initDataUnsafe:', userData);
                 return;
             }
-            
+
             // Fallback 2: парсим initData
             if (tg.initData) {
                 try {
@@ -566,7 +598,7 @@
                     console.error('[extractUserData] Ошибка при парсинге tg.initData:', e);
                 }
             }
-            
+
             console.log('[extractUserData] ❌ ОШИБКА: Не удалось получить данные пользователя!');
             console.log('[extractUserData] Убедитесь что Mini App открыт из Telegram бота');
             throw new Error('Не удалось получить данные пользователя');
@@ -577,25 +609,25 @@
             "meat": {
                 "name": "🥩 Мясо",
                 "items": {
-                    "1": {"name": "Говядина", "price": 10},
-                    "2": {"name": "Свинина", "price": 10},
-                    "3": {"name": "Курица", "price": 10}
+                    "1": { "name": "Говядина", "price": 10 },
+                    "2": { "name": "Свинина", "price": 10 },
+                    "3": { "name": "Курица", "price": 10 }
                 }
             },
             "vegetables": {
                 "name": "🥬 Овощи",
                 "items": {
-                    "4": {"name": "Помидоры", "price": 5},
-                    "5": {"name": "Огурцы", "price": 4},
-                    "6": {"name": "Морковь", "price": 3}
+                    "4": { "name": "Помидоры", "price": 5 },
+                    "5": { "name": "Огурцы", "price": 4 },
+                    "6": { "name": "Морковь", "price": 3 }
                 }
             },
             "fruits": {
                 "name": "🍎 Фрукты",
                 "items": {
-                    "7": {"name": "Яблоки", "price": 6},
-                    "8": {"name": "Апельсины", "price": 7},
-                    "9": {"name": "Бананы", "price": 5}
+                    "7": { "name": "Яблоки", "price": 6 },
+                    "8": { "name": "Апельсины", "price": 7 },
+                    "9": { "name": "Бананы", "price": 5 }
                 }
             }
         };
@@ -603,11 +635,11 @@
         async function loadProducts() {
             try {
                 console.log('Начинаю загрузку товаров...');
-                
+
                 // Пробуем загрузить с API
                 const apiUrl = window.location.origin + '/api/products';
                 console.log('API URL:', apiUrl);
-                
+
                 const response = await fetch(apiUrl, {
                     method: 'GET',
                     headers: {
@@ -616,7 +648,7 @@
                 });
 
                 console.log('Статус ответа:', response.status);
-                
+
                 if (response.ok) {
                     products = await response.json();
                     console.log('Товары загружены с API:', Object.keys(products));
@@ -629,7 +661,7 @@
                 console.log('Использую fallback товары');
                 products = fallbackProducts;
             }
-            
+
             console.log('Финальные товары:', products);
             displayCategories();
         }
@@ -637,19 +669,19 @@
         function displayCategories() {
             console.log('Отображаю категории...');
             const categoriesDiv = document.getElementById('categoriesList');
-            
+
             if (!categoriesDiv) {
                 console.error('categoriesList не найден!');
                 return;
             }
-            
+
             categoriesDiv.innerHTML = '';
-            
+
             if (!products || Object.keys(products).length === 0) {
                 categoriesDiv.innerHTML = '<div class="error-message">Товары не загружены</div>';
                 return;
             }
-            
+
             for (const [key, category] of Object.entries(products)) {
                 const btn = document.createElement('button');
                 btn.className = 'category-btn';
@@ -669,53 +701,86 @@
 
         function showProducts(categoryKey) {
             console.log('Показываю товары категории:', categoryKey || currentCategory);
-            
+
             // Если categoryKey не передан, используем текущую категорию
             if (!categoryKey) {
                 categoryKey = currentCategory;
             }
-            
+
             currentCategory = categoryKey;
             const category = products[categoryKey];
             const productsDiv = document.getElementById('productsList');
-            
+
             if (!productsDiv) {
                 console.error('productsList не найден!');
                 return;
             }
-            
+
             productsDiv.innerHTML = '';
-            
+
             for (const [itemId, item] of Object.entries(category.items)) {
-                const btn = document.createElement('button');
-                btn.className = 'product-btn';
-                btn.innerHTML = `
-                    <span class="name">${item.name}</span>
-                    <span class="price">$${item.price}</span>
+                const row = document.createElement('div');
+                row.className = 'product-row';
+                row.innerHTML = `
+                    <div class="product-info-mini">
+                        <span class="name">${item.name}</span>
+                        <span class="price">$${item.price}</span>
+                    </div>
+                    <div class="controls">
+                        <div class="qty-btn-mini" onclick="adjustCartItem('${itemId}', -1)">-</div>
+                        <div class="qty-btn-mini" onclick="adjustCartItem('${itemId}', 1)">+</div>
+                    </div>
                 `;
-                btn.onclick = () => showQuantityScreen(itemId, item);
-                productsDiv.appendChild(btn);
+                productsDiv.appendChild(row);
             }
-            
+
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const screen = document.getElementById('productsScreen');
             if (screen) screen.classList.add('active');
+        }
+
+        function adjustCartItem(itemId, delta) {
+            const category = products[currentCategory];
+            const item = category.items[itemId];
+
+            const cartItemIndex = cart.findIndex(i => i.id === itemId);
+
+            if (cartItemIndex > -1) {
+                cart[cartItemIndex].quantity += delta;
+                if (cart[cartItemIndex].quantity <= 0) {
+                    cart.splice(cartItemIndex, 1);
+                } else {
+                    cart[cartItemIndex].totalPrice = cart[cartItemIndex].price * cart[cartItemIndex].quantity;
+                }
+            } else if (delta > 0) {
+                const newItem = {
+                    id: itemId,
+                    name: item.name,
+                    price: item.price,
+                    quantity: delta,
+                    totalPrice: item.price * delta,
+                    category: category.name
+                };
+                cart.unshift(newItem);
+            }
+
+            updateCartDisplay();
         }
 
         function showQuantityScreen(itemId, item) {
             console.log('Показываю количество для товара:', item.name);
             currentProduct = { id: itemId, ...item };
             currentQuantity = 0;
-            
+
             const nameEl = document.getElementById('productName');
             const priceEl = document.getElementById('productPrice');
-            
+
             if (nameEl) nameEl.textContent = item.name;
             if (priceEl) priceEl.textContent = `$${item.price}`;
-            
+
             displayQuantityKeyboard();
             updateQuantityDisplay();
-            
+
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const screen = document.getElementById('quantityScreen');
             if (screen) screen.classList.add('active');
@@ -727,7 +792,7 @@
                 console.error('quantityKeyboard не найден!');
                 return;
             }
-            
+
             keyboard.innerHTML = '';
             const buttons = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
             buttons.forEach(num => {
@@ -786,10 +851,10 @@
 
             cart.push(cartItem);
             console.log('[addToCart] Товар добавлен в корзину:', cartItem);
-            
+
             updateCartDisplay();
             showCategories();
-            
+
             // Toast сообщение
             const message = `${cartItem.name} (${cartItem.quantity} шт.) добавлено в корзину ✅`;
             console.log('[addToCart]', message);
@@ -844,7 +909,7 @@
             }
 
             console.log('[checkoutCart] Оформляю единый заказ из корзины:', cart);
-            
+
             if (!userData || !userData.id) {
                 console.error('[checkoutCart] ❌ Данные пользователя недоступны');
                 alert('❌ Ошибка: данные пользователя не получены. Откройте приложение через бота.');
@@ -853,7 +918,7 @@
 
             // Подготавливаем единый заказ со всеми товарами
             const totalPrice = cart.reduce((sum, item) => sum + item.totalPrice, 0);
-            
+
             const orderData = {
                 user_id: userData.id,
                 username: userData.username || `user_${userData.id}`,
@@ -871,7 +936,7 @@
             try {
                 const apiUrl = window.location.origin + '/api/order';
                 console.log('[checkoutCart] Отправляю единый заказ:', orderData);
-                
+
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -880,7 +945,7 @@
 
                 const result = await response.json();
                 console.log('[checkoutCart] Ответ сервера:', result);
-                
+
                 if (response.ok) {
                     const itemCount = cart.length;
                     cart = []; // Очищаем корзину
@@ -904,7 +969,7 @@
         function updateQuantityDisplay() {
             const display = document.getElementById('quantityDisplay');
             const total = document.getElementById('totalPrice');
-            
+
             if (display) display.textContent = currentQuantity;
             if (total) total.textContent = `$${currentProduct.price * currentQuantity}`;
         }
@@ -915,7 +980,7 @@
                 console.error('orderDetails не найден!');
                 return;
             }
-            
+
             detailsDiv.innerHTML = `
                 <div class="success-message">Заказ №${order.order_number} успешно оформлен!</div>
                 <div class="info-row">
@@ -939,11 +1004,12 @@
                     <span class="info-value">${order.status}</span>
                 </div>
             `;
-            
+
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const screen = document.getElementById('successScreen');
             if (screen) screen.classList.add('active');
         }
     </script>
 </body>
+
 </html>

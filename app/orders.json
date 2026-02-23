@@ -133,5 +133,23 @@
     "total_price": 10,
     "timestamp": "2026-02-23T09:34:19.620179",
     "status": "Собирается"
+  },
+  {
+    "order_number": 7,
+    "user_id": 279728874,
+    "username": "psygakki",
+    "items": [
+      {
+        "item_id": "12",
+        "item_name": "Лаваш",
+        "category": "Хлеб",
+        "quantity": 2,
+        "price_per_unit": 10,
+        "total_price": 20
+      }
+    ],
+    "total_price": 20,
+    "timestamp": "2026-02-23T09:53:33.259618",
+    "status": "Собирается"
   }
 ]
