@@ -1,0 +1,15 @@
+services:
+  webapp:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: tg-miniapp-produktik247
+    restart: unless-stopped
+    volumes:
+      - ./app:/app
+    networks:
+      - nginx-network
+
+networks:
+  nginx-network:
+    external: true
